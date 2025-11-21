@@ -1,0 +1,24 @@
+package com.drmejia.core.domain.models;
+
+import java.time.LocalDate;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class Order {
+    
+    private Long idOrder;
+    private String number;
+    private String documentPatient;
+    private Long idHeadquarter;
+    private Long idProvider;
+    private LocalDate shippingDate;
+    private LocalDate deliveryDate;
+    private Integer daysPassed;
+}
