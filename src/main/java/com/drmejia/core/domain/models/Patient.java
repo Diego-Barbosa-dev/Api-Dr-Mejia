@@ -16,5 +16,11 @@ public class Patient {
     String email;
     String address;
 
+    public boolean hasNullAttributes() {
+        return this.document == null || this.document.isBlank() ||
+               this.name == null || this.name.isBlank() ||
+               this.email == null || this.email.isBlank() ||
+               this.address == null || this.address.isBlank();
+    }
 
 }

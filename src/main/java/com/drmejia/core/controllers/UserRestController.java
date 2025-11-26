@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -62,19 +63,19 @@ public class UserRestController {
     }
 
     /* Devuelve al usuario */
-    @GetMapping("/{name}")
-    public ResponseEntity<?> getByName(@PathVariable String name) throws BadRequestException{
+    @GetMapping("/{nit}")
+    public ResponseEntity<?> getByNit(@PathVariable("nit") String nit) throws BadRequestException{
         
-        if(name.length() < 3){
+        if(nit.length() < 3){
             throw new BadRequestException("El parametro debe tener al menos 3 letras"); 
         }
 
 
         return userService.getAllUsers().stream().
-                    filter(user -> user.getName().toLowerCase().contains(name)).
+                    filter(user -> user.getNit().toLowerCase().contains(nit)).
                     findFirst()
                     .map(ResponseEntity::ok)
-                    .orElseThrow(() -> new ResourceNotFoundException("Usuario " + name + " no encontrado"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuario " + nit + " no encontrado"));
 
     }
 
@@ -82,12 +83,23 @@ public class UserRestController {
      * Gets an user from outside getting a JSON file
     */
     @PostMapping
-    public ResponseEntity<?> altaUser(@RequestBody User user) throws BadRequestException{ 
+    public ResponseEntity<?> postUser(@RequestBody User user) throws BadRequestException{ 
+
+        if(user.hasNullAttributes()){
+            throw new BadRequestException("Null Attributes Are Not Allowed"
+                + "\nNit: " + user.getNit()
+                + "\nName: " + user.getName()
+                + "\nEmail: " + user.getEmail()
+                + "\nPassword: " + "NOT ALLOWED"
+                + "\nRole:" + user.getRole()
+            );
+        }
+
         if(user.getName().length() < 3){
             throw new BadRequestException("El usuario no puede tener menos de 3 carácteres");
         }
 
-        if(!user.getMail().contains("@")){
+        if(!user.getEmail().contains("@")){
             throw new BadRequestException("El correo electrónico no es válido");
         }
 
@@ -105,25 +117,38 @@ public class UserRestController {
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{name}")
-                .buildAndExpand(user.getName())
+                .path("/{nit}")
+                .buildAndExpand(user.getNit())
                 .toUri();
         return ResponseEntity.created(location).body(user);
     }
 
 
-    @PutMapping
-    public ResponseEntity<?> modifyUsers(@RequestBody User user){
-
-        return null;
+    @PutMapping("/{nit}")
+    public ResponseEntity<?> putUsers(@PathVariable("nit") String nit, @RequestBody User user){
+        user.setNit(nit);
+        try {
+            userService.updateUser(user);
+        } catch (BadRequestException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("/{userNit}")
-    public ResponseEntity<?> deletUsers(@PathVariable int userNit){
+    @PatchMapping("/{nit}")
+    public ResponseEntity<?> patchUser(@PathVariable("nit") String nit, @RequestBody User user){
+        user.setNit(nit);
+        userService.modifyUser(user);
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("/{nit}")
+    public ResponseEntity<?> deleteUsers(@PathVariable("nit") String nit){
   
         /* No Content para los DELETE 
          * No content for DELETE method
         */
+        userService.deleteUser(nit);
         return ResponseEntity.noContent().build();
     }
 }

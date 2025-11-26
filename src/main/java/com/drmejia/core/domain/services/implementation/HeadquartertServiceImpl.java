@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.drmejia.core.domain.models.Headquarter;
 import com.drmejia.core.domain.services.interfaces.HeadquarterService;
+import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 import com.drmejia.core.persistence.entities.HeadquarterEntity;
 import com.drmejia.core.persistence.repository.HeadquaterRepository;
@@ -37,7 +38,7 @@ public class HeadquartertServiceImpl implements HeadquarterService {
     @Override
     public void saveHeadquarter(Headquarter headquarter) {
         HeadquarterEntity headquarterEntity = new HeadquarterEntity();
-        headquarter.setName(headquarter.getName());
+        headquarterEntity.setName(headquarter.getName());
 
         headquaterRepository.save(headquarterEntity);
     }
@@ -62,9 +63,32 @@ public class HeadquartertServiceImpl implements HeadquarterService {
 
     /* UPDATE METHOD */
     @Override
-    public void modifyHeadquarter(@NonNull Long idHeadquarter, String name) {
-        HeadquarterEntity headquarterEntity = headquaterRepository.findById(idHeadquarter).orElseThrow(this::nonExistingHeadquarter);
-        headquarterEntity.setName(name);
+    public void modifyHeadquarter(Headquarter headquarter) throws BadRequestException {
+        /* PATCH HTTP METHOD */
+        if(headquarter.getIdHeadquarter() == null){
+            throw new BadRequestException("Headquarter Id Can't Be Null");
+        }
+        HeadquarterEntity headquarterEntity = headquaterRepository.findById(headquarter.getIdHeadquarter()).orElseThrow(this::nonExistingHeadquarter);
+        
+        if(headquarter.getName() != null && !headquarter.getName().isBlank()){
+            headquarterEntity.setName(headquarter.getName());
+        }
+
+        headquaterRepository.save(headquarterEntity);
+    }
+
+    @Override
+    public void updateHeadquarter(Headquarter headquarter) throws BadRequestException {
+        /* PUT HTTP METHOD */
+        if(headquarter.getIdHeadquarter() == null){
+            throw new BadRequestException("Headquarter Id Can't Be Null");
+        }
+        if(headquarter.getName() == null || headquarter.getName().isBlank()){
+            throw new BadRequestException("Headquarter Name Can't Be Null Or Blank");
+        }
+
+        HeadquarterEntity headquarterEntity = headquaterRepository.findById(headquarter.getIdHeadquarter()).orElseThrow(this::nonExistingHeadquarter);
+        headquarterEntity.setName(headquarter.getName());
 
         headquaterRepository.save(headquarterEntity);
     }

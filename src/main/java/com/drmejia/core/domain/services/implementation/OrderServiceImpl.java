@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.drmejia.core.domain.models.Order;
 import com.drmejia.core.domain.services.interfaces.OrderService;
+import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 import com.drmejia.core.persistence.entities.OrderEntity;
 import com.drmejia.core.persistence.repository.HeadquaterRepository;
@@ -98,7 +99,66 @@ public class OrderServiceImpl implements OrderService{
 
     /* UPDATE METHODS */
     @Override
-    public void modifyOrder(Order order) {
+    public void modifyOrder(Order order) throws BadRequestException {
+        /* PATCH HTTP METHOD */
+        if(order.getIdOrder() == null){
+            throw new BadRequestException("Order Id Can't Be Null");
+        }
+        OrderEntity orderEntity = orderRepository.findById(order.getIdOrder()).orElseThrow(this::nonExistingOrder);
+
+        if(order.getNumber() != null && !order.getNumber().isBlank()){
+            orderEntity.setNumber(order.getNumber());
+        }
+        if(order.getDocumentPatient() != null && !order.getDocumentPatient().isBlank()){
+            orderEntity.setPatient(patientRepository.findByDocument(order.getDocumentPatient()).orElseThrow(this::nonExistingPatient));
+        }
+        if(order.getIdHeadquarter() != null){
+            orderEntity.setHeadquarters(headquaterRepository.findById(order.getIdHeadquarter()).orElseThrow(this::nonExistingHeadquartet));
+        }
+        if(order.getIdProvider() != null){
+            orderEntity.setProvider(providerRepository.findById(order.getIdProvider()).orElseThrow(this::nonExistingProvider));
+        }
+        if(order.getShippingDate() != null){
+            orderEntity.setShippingDate(order.getShippingDate());
+        }
+        if(order.getDeliveryDate() != null){
+            orderEntity.setDeliveryDate(order.getDeliveryDate());
+        }
+        if(order.getDaysPassed() != null){
+            orderEntity.setDaysPassed(order.getDaysPassed());
+        }
+        
+        orderRepository.save(orderEntity);
+    }
+
+    @Override
+    public void updateOrder(Order order) throws BadRequestException {
+        /* PUT HTTP METHOD */
+        if(order.getIdOrder() == null){
+            throw new BadRequestException("Order Id Can't Be Null");
+        }
+        if(order.getNumber() == null || order.getNumber().isBlank()){
+            throw new BadRequestException("Order Number Can't Be Null Or Blank");
+        }
+        if(order.getDocumentPatient() == null || order.getDocumentPatient().isBlank()){
+            throw new BadRequestException("Order Document Patient Can't Be Null Or Blank");
+        }
+        if(order.getIdHeadquarter() == null){
+            throw new BadRequestException("Order Headquarter Can't Be Null");
+        }
+        if(order.getIdProvider() == null){
+            throw new BadRequestException("Order Provider Can't Be Null");
+        }
+        if(order.getShippingDate() == null){
+            throw new BadRequestException("Order Shipping Date Can't Be Null");
+        }
+        if(order.getDeliveryDate() == null){
+            throw new BadRequestException("Order Delivery Date Can't Be Null");
+        }
+        if(order.getDaysPassed() == null){
+            throw new BadRequestException("Order Days Passed Can't Be Null");
+        }
+
         OrderEntity orderEntity = orderRepository.findById(order.getIdOrder()).orElseThrow(this::nonExistingOrder);
 
         orderEntity.setNumber(order.getNumber());
@@ -108,20 +168,9 @@ public class OrderServiceImpl implements OrderService{
         orderEntity.setShippingDate(order.getShippingDate());
         orderEntity.setDeliveryDate(order.getDeliveryDate());
         orderEntity.setDaysPassed(order.getDaysPassed());
+        
+        orderRepository.save(orderEntity);
     }
-
-
-    public void modifyOrderNumber(@NonNull Long idOrder, @NonNull String number){
-        OrderEntity orderEntity = orderRepository.findById(idOrder).orElseThrow(this::nonExistingOrder);
-        orderEntity.setNumber(number);
-    }
-
-    public void modifyOrderPatient(@NonNull Long idOrder, @NonNull String documentPatient){
-        OrderEntity orderEntity = orderRepository.findById(idOrder).orElseThrow(this::nonExistingOrder);
-        orderEntity.setPatient(patientRepository.findByDocument(documentPatient).orElseThrow(this::nonExistingPatient));
-
-    }
-
 
     /* DELETE METHOD */
     @Override

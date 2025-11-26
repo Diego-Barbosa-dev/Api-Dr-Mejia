@@ -21,4 +21,15 @@ public class Order {
     private LocalDate shippingDate;
     private LocalDate deliveryDate;
     private Integer daysPassed;
+
+    public boolean hasNullAttributes() {
+        return this.idOrder == null ||
+               this.number == null || this.number.isBlank() ||
+               this.documentPatient == null || this.documentPatient.isBlank() ||
+               this.idHeadquarter == null ||
+               this.idProvider == null ||
+               this.shippingDate == null ||
+               this.deliveryDate == null ||
+               this.daysPassed == null;
+    }
 }

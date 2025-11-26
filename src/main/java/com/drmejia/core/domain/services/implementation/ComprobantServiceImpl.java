@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.drmejia.core.domain.models.Comprobant;
 import com.drmejia.core.domain.services.interfaces.ComprobantService;
+import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 import com.drmejia.core.persistence.entities.ComprobantEntity;
 import com.drmejia.core.persistence.repository.ComprobantRepository;
@@ -60,7 +61,31 @@ public class ComprobantServiceImpl implements ComprobantService{
 
     /* UPDATE METHODS*/
     @Override
-    public void modifyComprobant(Comprobant comprobant){
+    public void modifyComprobant(Comprobant comprobant) throws BadRequestException{
+        /* PATCH HTTP METHOD */
+        if(comprobant.getIdComprobant() == null){
+            throw new BadRequestException("Comprobant Id Can't Be Null");
+        }
+        ComprobantEntity comprobantEntity = comprobantRepository
+        .findById(comprobant.getIdComprobant())
+        .orElseThrow(this::nonExistingComprobant);
+
+        if(comprobant.getName() != null && !comprobant.getName().isBlank()){
+            comprobantEntity.setName(comprobant.getName());
+        }
+        comprobantRepository.save(comprobantEntity);
+    }
+
+    @Override
+    public void updateComprobant(Comprobant comprobant) throws BadRequestException{
+        /* PUT HTTP METHOD */
+        if(comprobant.getIdComprobant() == null){
+            throw new BadRequestException("Comprobant Id Can't Be Null");
+        }
+        if(comprobant.getName() == null || comprobant.getName().isBlank()){
+            throw new BadRequestException("Comprobant Name Can't Be Null Or Blank");
+        }
+
         ComprobantEntity comprobantEntity = comprobantRepository
         .findById(comprobant.getIdComprobant())
         .orElseThrow(this::nonExistingComprobant);
@@ -69,17 +94,8 @@ public class ComprobantServiceImpl implements ComprobantService{
         comprobantRepository.save(comprobantEntity);
     }
 
-    public void modifyComprobantComprobantId(@NonNull Long newId, @NonNull Long OldId){
-        ComprobantEntity comprobantEntity = comprobantRepository
-        .findById(OldId)
-        .orElseThrow(this::nonExistingComprobant);
-
-        comprobantEntity.setIdComprobant(newId);
-        comprobantRepository.save(comprobantEntity);
-    }
-
     @Override
-    public void deleteComprobant(Long idComprobant){
+    public void deleteComprobant(@NonNull Long idComprobant){
         comprobantRepository.deleteById(idComprobant);
     }
 }

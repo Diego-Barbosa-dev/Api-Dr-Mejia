@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.drmejia.core.domain.models.Eye;
 import com.drmejia.core.domain.services.interfaces.EyeService;
 import com.drmejia.core.enums.EyeType;
+import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 import com.drmejia.core.persistence.entities.EyeEntity;
 import com.drmejia.core.persistence.repository.EyeRepository;
@@ -83,74 +84,97 @@ public class EyeServiceImpl implements EyeService{
 
     /* MODIFY METHOD */
     @Override
-    public void modifyEye(Eye eye) {
+    public void modifyEye(Eye eye) throws BadRequestException {
+        /* PATCH HTTP METHOD */
+        if(eye.getIdEye() == null){
+            throw new BadRequestException("Eye Id Can't Be Null");
+        }
+        EyeEntity eyeEntity = eyeRepository.findById(eye.getIdEye()).orElseThrow(this::nonExistingEye);
+
+        if(eye.getOrder() != null){
+            eyeEntity.setOrden(orderRepository.findById(eye.getOrder()).orElseThrow(this::nonExistingEye));
+        }
+        if(eye.getType() != null){
+            eyeEntity.setType(eye.getType());
+        }
+        if(eye.getAxis() != null && !eye.getAxis().isBlank()){
+            eyeEntity.setAxis(eye.getAxis());
+        }
+        if(eye.getCil() != null && !eye.getCil().isBlank()){
+            eyeEntity.setCil(eye.getCil());
+        }
+        if(eye.getEsf() != null && !eye.getEsf().isBlank()){
+            eyeEntity.setEsf(eye.getEsf());
+        }
+        if(eye.getAddition() != null && !eye.getAddition().isBlank()){
+            eyeEntity.setAddition(eye.getAddition());
+        }
+        if(eye.getDp() != null && !eye.getDp().isBlank()){
+            eyeEntity.setDp(eye.getDp());
+        }
+        if(eye.getHigh() != null && !eye.getHigh().isBlank()){
+            eyeEntity.setHigh(eye.getHigh());
+        }
+        if(eye.getAvl() != null && !eye.getAvl().isBlank()){
+            eyeEntity.setAvl(eye.getAvl());
+        }
+        if(eye.getAvp() != null && !eye.getAvp().isBlank()){
+            eyeEntity.setAvp(eye.getAvp());
+        }
+        
+        eyeRepository.save(eyeEntity);
+    }
+
+    @Override
+    public void updateEye(Eye eye) throws BadRequestException {
+        /* PUT HTTP METHOD */
+        if(eye.getIdEye() == null){
+            throw new BadRequestException("Eye Id Can't Be Null");
+        }
+        if(eye.getOrder() == null){
+            throw new BadRequestException("Eye Order Can't Be Null");
+        }
+        if(eye.getType() == null){
+            throw new BadRequestException("Eye Type Can't Be Null");
+        }
+        if(eye.getEsf() == null || eye.getEsf().isBlank()){
+            throw new BadRequestException("Eye Esf Can't Be Null Or Blank");
+        }
+        if(eye.getCil() == null || eye.getCil().isBlank()){
+            throw new BadRequestException("Eye Cil Can't Be Null Or Blank");
+        }
+        if(eye.getAxis() == null || eye.getAxis().isBlank()){
+            throw new BadRequestException("Eye Axis Can't Be Null Or Blank");
+        }
+        if(eye.getAddition() == null || eye.getAddition().isBlank()){
+            throw new BadRequestException("Eye Addition Can't Be Null Or Blank");
+        }
+        if(eye.getDp() == null || eye.getDp().isBlank()){
+            throw new BadRequestException("Eye Dp Can't Be Null Or Blank");
+        }
+        if(eye.getHigh() == null || eye.getHigh().isBlank()){
+            throw new BadRequestException("Eye High Can't Be Null Or Blank");
+        }
+        if(eye.getAvl() == null || eye.getAvl().isBlank()){
+            throw new BadRequestException("Eye Avl Can't Be Null Or Blank");
+        }
+        if(eye.getAvp() == null || eye.getAvp().isBlank()){
+            throw new BadRequestException("Eye Avp Can't Be Null Or Blank");
+        }
+
         EyeEntity eyeEntity = eyeRepository.findById(eye.getIdEye()).orElseThrow(this::nonExistingEye);
 
         eyeEntity.setOrden(orderRepository.findById(eye.getOrder()).orElseThrow(this::nonExistingEye));
         eyeEntity.setType(eye.getType());
         eyeEntity.setAxis(eye.getAxis());
         eyeEntity.setCil(eye.getCil());
+        eyeEntity.setEsf(eye.getEsf());
         eyeEntity.setAddition(eye.getAddition());
         eyeEntity.setDp(eye.getDp());
         eyeEntity.setHigh(eye.getHigh());
         eyeEntity.setAvl(eye.getAvl());
         eyeEntity.setAvp(eye.getAvp());
         
-        eyeRepository.save(eyeEntity);
-    }
-
-    // Métodos individuales para modificar cada atributo de EyeEntity
-    public void modifyEyeType(@NonNull Long idEye, EyeType type) {
-        EyeEntity eyeEntity = eyeRepository.findById(idEye).orElseThrow(this::nonExistingEye);
-        eyeEntity.setType(type);
-        eyeRepository.save(eyeEntity);
-    }
-
-    public void modifyEyeEsf(@NonNull Long idEye, String esf) {
-        EyeEntity eyeEntity = eyeRepository.findById(idEye).orElseThrow(this::nonExistingEye);
-        eyeEntity.setEsf(esf);
-        eyeRepository.save(eyeEntity);
-    }
-
-    public void modifyEyeCil(@NonNull Long idEye, String cil) {
-        EyeEntity eyeEntity = eyeRepository.findById(idEye).orElseThrow(this::nonExistingEye);
-        eyeEntity.setCil(cil);
-        eyeRepository.save(eyeEntity);
-    }
-
-    public void modifyEyeAxis(@NonNull Long idEye, String axis) {
-        EyeEntity eyeEntity = eyeRepository.findById(idEye).orElseThrow(this::nonExistingEye);
-        eyeEntity.setAxis(axis);
-        eyeRepository.save(eyeEntity);
-    }
-
-    public void modifyEyeAddition(@NonNull Long idEye, String addition) {
-        EyeEntity eyeEntity = eyeRepository.findById(idEye).orElseThrow(this::nonExistingEye);
-        eyeEntity.setAddition(addition);
-        eyeRepository.save(eyeEntity);
-    }
-
-    public void modifyEyeDp(@NonNull Long idEye, String dp) {
-        EyeEntity eyeEntity = eyeRepository.findById(idEye).orElseThrow(this::nonExistingEye);
-        eyeEntity.setDp(dp);
-        eyeRepository.save(eyeEntity);
-    }
-
-    public void modifyEyeHigh(@NonNull Long idEye, String high) {
-        EyeEntity eyeEntity = eyeRepository.findById(idEye).orElseThrow(this::nonExistingEye);
-        eyeEntity.setHigh(high);
-        eyeRepository.save(eyeEntity);
-    }
-
-    public void modifyEyeAvl(@NonNull Long idEye, String avl) {
-        EyeEntity eyeEntity = eyeRepository.findById(idEye).orElseThrow(this::nonExistingEye);
-        eyeEntity.setAvl(avl);
-        eyeRepository.save(eyeEntity);
-    }
-
-    public void modifyEyeAvp(@NonNull Long idEye, String avp) {
-        EyeEntity eyeEntity = eyeRepository.findById(idEye).orElseThrow(this::nonExistingEye);
-        eyeEntity.setAvp(avp);
         eyeRepository.save(eyeEntity);
     }
 

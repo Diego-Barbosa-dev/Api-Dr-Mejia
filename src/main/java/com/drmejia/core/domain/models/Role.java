@@ -12,4 +12,8 @@ import lombok.Setter;
 public class Role {
     private Long idRole;
     private String name;
+
+    public boolean hasNullAttributes() {
+        return this.idRole == null || this.name == null || this.name.isBlank();
+    }
 }

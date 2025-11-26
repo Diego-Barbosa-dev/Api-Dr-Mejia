@@ -72,53 +72,57 @@ public class ProviderServiceImpl implements ProviderService {
     
     /* Modifiers (UPDATE)*/
     @Override
-    public void modifyProvider(Provider provider) {
+    public void modifyProvider(Provider provider) throws BadRequestException{
+        /* PATCH HTTP method */
         if (provider.getIdProvider() == null) {
-            throw new BadRequestException("El ID del proveedor no puede ser nulo para modificarlo");
+            throw new BadRequestException("Provider Id Can't Be Null");
+        }
+        ProviderEntity providerEntity = searchProviderEntity(provider.getIdProvider());
+        if (provider.getNit() != null && !provider.getNit().isBlank()) {
+            providerEntity.setNit(provider.getNit());
+        }
+        if (provider.getName()!= null && !provider.getName().isBlank()){
+            providerEntity.setName(provider.getName());
+        }
+        if(provider.getAddress() != null && !provider.getAddress().isBlank()){
+            providerEntity.setAddress(provider.getAddress());
+        }
+        if(provider.getEmail() != null && !provider.getEmail().isBlank()){
+            providerEntity.setEmail(provider.getEmail());
+        }
+        if (providerEntity == null) {
+            throw nonExistingProvider();
+        }
+        providerRepository.save(providerEntity);
+
+    }
+
+    @Override
+    public void updateProvider(Provider provider) throws BadRequestException {
+        /* PUT HTTP method */
+        if (provider.getIdProvider() == null) {
+            throw new BadRequestException("Provider Id Can't Be Null");
         }
 
         ProviderEntity providerEntity = searchProviderEntity(provider.getIdProvider());
+
+        if (provider.getNit() == null || provider.getNit().isBlank()) {
+            throw new BadRequestException("Provider NIT Can't Be Null Or Blank");
+        }
+        if (provider.getName() == null || provider.getName().isBlank()) {
+            throw new BadRequestException("Provider Name Can't Be Null Or Blank");
+        }
+        if (provider.getAddress() == null || provider.getAddress().isBlank()) {
+            throw new BadRequestException("Provider Address Can't Be Null Or Blank");
+        }
+        if (provider.getEmail() == null || provider.getEmail().isBlank()) {
+            throw new BadRequestException("Provider Email Can't Be Null Or Blank");
+        }
         providerEntity.setNit(provider.getNit());
         providerEntity.setName(provider.getName());
         providerEntity.setAddress(provider.getAddress());
         providerEntity.setEmail(provider.getEmail());
 
-        providerRepository.save(providerEntity);
-
-    }
-
-    public void modifyProviderId(@NonNull Long newId, @NonNull Long oldId){
-        ProviderEntity providerEntity = searchProviderEntity(oldId);
-
-        providerEntity.setIdProvider(newId);
-        providerRepository.save(providerEntity);
-    }
-
-    public void modifyProviderNit(@NonNull Long idProvider, @NonNull String nit){
-        ProviderEntity providerEntity = searchProviderEntity(idProvider);
-
-        providerEntity.setNit(nit);
-        providerRepository.save(providerEntity);
-    }
-
-    public void modifyProviderName(@NonNull Long idProvider, @NonNull String name){
-        ProviderEntity providerEntity = searchProviderEntity(idProvider);
-
-        providerEntity.setName(name);
-        providerRepository.save(providerEntity);
-    }
-    
-    public void modifyProviderAddress(@NonNull Long idProvider, @NonNull String address){
-        ProviderEntity providerEntity = searchProviderEntity(idProvider);
-
-        providerEntity.setAddress(address);
-        providerRepository.save(providerEntity);
-    }
-
-    public void modifyProviderEmail(@NonNull Long idProvider, @NonNull String email){
-        ProviderEntity providerEntity = searchProviderEntity(idProvider);
-
-        providerEntity.setEmail(email);
         providerRepository.save(providerEntity);
     }
 

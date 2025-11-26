@@ -11,4 +11,5 @@ import com.drmejia.core.persistence.entities.PatientEntity;
 public interface PatientRepository extends JpaRepository<PatientEntity, Long> {
     Optional<PatientEntity> findByDocument(String document);
     Optional<PatientEntity> deleteByDocument(String document);
+    boolean existsByDocument(String document);
 }

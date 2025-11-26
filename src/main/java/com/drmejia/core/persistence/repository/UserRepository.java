@@ -11,4 +11,5 @@ import com.drmejia.core.persistence.entities.UserEntity;
 public interface UserRepository extends JpaRepository<UserEntity, Long>{
     Optional<UserEntity> findByNit(String nit);
     Optional<UserEntity> deleteByNit(String nit);
+    boolean existsByNit(String nit);
 }

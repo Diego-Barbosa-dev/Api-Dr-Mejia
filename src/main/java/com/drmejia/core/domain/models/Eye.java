@@ -28,4 +28,18 @@ public class Eye {
     private String avl;
     private String avp;
 
+    public boolean hasNullAttributes() {
+        return this.order == null || 
+               this.type == null ||
+               this.esf == null || this.esf.isBlank() ||
+               this.cil == null || this.cil.isBlank() ||
+               this.axis == null || this.axis.isBlank() ||
+               this.addition == null || this.addition.isBlank() ||
+               this.dp == null || this.dp.isBlank() ||
+               this.high == null || this.high.isBlank() ||
+               this.avl == null || this.avl.isBlank() ||
+               this.avp == null || this.avp.isBlank();
+    }
+
+
 }

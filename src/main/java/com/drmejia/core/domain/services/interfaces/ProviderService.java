@@ -8,5 +8,6 @@ public interface ProviderService {
     List<Provider> getAllProviders();
     void saveProvider(Provider provider);
     void modifyProvider(Provider provider);
+    void updateProvider(Provider provider);
     void deleteProvider(Long idProvider);
 }

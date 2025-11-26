@@ -14,4 +14,7 @@ public class Headquarter {
     private Long idHeadquarter;
     private String name;
     
+    public boolean hasNullAttributes() {
+        return this.idHeadquarter == null || this.name == null || this.name.isBlank();
+    }
 }

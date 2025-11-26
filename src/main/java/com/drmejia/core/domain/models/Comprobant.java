@@ -12,4 +12,8 @@ import lombok.Setter;
 public class Comprobant {
     private Long idComprobant;
     private String name;
+
+    public boolean hasNullAttributes() {
+        return this.idComprobant == null || this.name == null || this.name.isBlank();
+    }
 }

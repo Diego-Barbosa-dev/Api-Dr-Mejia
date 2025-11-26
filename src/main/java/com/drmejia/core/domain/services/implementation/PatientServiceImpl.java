@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.drmejia.core.domain.models.Patient;
 import com.drmejia.core.domain.services.interfaces.PatientService;
+import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 import com.drmejia.core.persistence.entities.PatientEntity;
 import com.drmejia.core.persistence.repository.PatientRepository;
@@ -68,7 +68,44 @@ public class PatientServiceImpl implements PatientService {
      * these all are modify methods until next comment
      */
     @Override
-    public void modifyPatient(Patient patient) {
+    public void modifyPatient(Patient patient) throws BadRequestException {
+        /* PATCH HTTP METHOD */
+        if(patient.getDocument() == null || patient.getDocument().isBlank()){
+            throw new BadRequestException("Patient Document Can't Be Null Or Blank");
+        }
+        PatientEntity patientEntity = patientRepository
+        .findByDocument(patient.getDocument())
+        .orElseThrow(this::nonExistingPatient);
+        
+        if(patient.getName() != null && !patient.getName().isBlank()){
+            patientEntity.setName(patient.getName());
+        }
+        if(patient.getEmail() != null && !patient.getEmail().isBlank()){
+            patientEntity.setEmail(patient.getEmail());
+        }
+        if(patient.getAddress() != null && !patient.getAddress().isBlank()){
+            patientEntity.setAddress(patient.getAddress());
+        }
+        
+        patientRepository.save(patientEntity);
+    }
+
+    @Override
+    public void updatePatient(Patient patient) throws BadRequestException {
+        /* PUT HTTP METHOD */
+        if(patient.getDocument() == null || patient.getDocument().isBlank()){
+            throw new BadRequestException("Patient Document Can't Be Null Or Blank");
+        }
+        if(patient.getName() == null || patient.getName().isBlank()){
+            throw new BadRequestException("Patient Name Can't Be Null Or Blank");
+        }
+        if(patient.getEmail() == null || patient.getEmail().isBlank()){
+            throw new BadRequestException("Patient Email Can't Be Null Or Blank");
+        }
+        if(patient.getAddress() == null || patient.getAddress().isBlank()){
+            throw new BadRequestException("Patient Address Can't Be Null Or Blank");
+        }
+
         PatientEntity patientEntity = patientRepository
         .findByDocument(patient.getDocument())
         .orElseThrow(this::nonExistingPatient);
@@ -119,8 +156,9 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void deletePatient(String document) {
-        patientRepository.findByDocument(document)
-        .orElseThrow(this::nonExistingPatient);
+        if(!patientRepository.existsByDocument(document)){
+            throw nonExistingPatient();
+        }
         patientRepository.deleteByDocument(document);
     }
 

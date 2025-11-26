@@ -3,9 +3,9 @@ package com.drmejia.core.domain.services.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.drmejia.core.domain.models.User;
 import com.drmejia.core.domain.services.interfaces.UserService;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
@@ -18,6 +18,8 @@ import lombok.NonNull;
 
 @Service
 public class UserServiceImpl implements UserService{
+
+    
     
     @Autowired
     private UserRepository userRepository;
@@ -46,17 +48,18 @@ public class UserServiceImpl implements UserService{
     public void saveUser(User user){
         UserEntity userEntity = new UserEntity();
         RoleEntity roleEntity = roleRepository
-        .findById(user.getRol())
+        .findById(user.getRole())
         .orElseThrow(this::nonExistingUser);
 
         userEntity.setNit(user.getNit());
         userEntity.setName(user.getName());
-        userEntity.setEmail(user.getMail());
+        userEntity.setEmail(user.getEmail());
         userEntity.setPassword(user.getPassword());
         userEntity.setRole(roleEntity);
         userRepository.save(userEntity);
         
     }
+
     /* READ the USERS */
     @Override
     public List<User> getAllUsers(){
@@ -68,69 +71,72 @@ public class UserServiceImpl implements UserService{
             User user = new User();
             user.setNit(userEntity.getNit());
             user.setName(userEntity.getName());
-            user.setMail(userEntity.getEmail());
+            user.setEmail(userEntity.getEmail());
             user.setPassword(userEntity.getPassword());
-            user.setRol(userEntity.getRole().getIdRol());
+            user.setRole(userEntity.getRole().getIdRol());
             users.add(user);
         }
         return users;
     }
 
-
-
     /* UPDATE Methods */
     @Override
-    public void modifyUser(User user, @NonNull Long role) {
-        
-        UserEntity userEntity = userRepository.findByNit(user.getNit())
-        .orElseThrow(this::nonExistingUser);
+    public void modifyUser(User user) {
+        /* PATCH HTTP METHOD */
+        if (user.getNit().isBlank() && user.getNit() == null ) {
+        }
+        UserEntity userEntity = userRepository.findByNit(user.getNit()).orElseThrow(this::nonExistingUser);
+        if (!user.getName().isBlank() && user.getName() != null) {
+            userEntity.setName(user.getName());
+        }
+        if (!user.getEmail().isBlank() && user.getEmail() != null) {
+            userEntity.setEmail(user.getEmail());
+        }
+        if(!user.getPassword().isBlank() && user.getPassword() != null){
+            userEntity.setPassword(user.getPassword());
+        }
+        if(user.getRole() != null){
+            userEntity.setRole(roleRepository.findById(user.getRole()).orElseThrow(this::nonExistingRole));
+        }
+        if (userEntity != null){
+            userRepository.save(userEntity);
+        }
 
-        userEntity.setName(user.getName()); 
-        userEntity.setEmail(user.getMail());
+    }
+
+    @Override
+    public void updateUser(User user) throws BadRequestException{
+        /* PUT HTTP METHOD */
+        if (user.getNit() == null || user.getNit().isBlank()){
+            throw new BadRequestException("Nit Can't Be Null Or Empty");
+        }
+        if(user.getName() == null || user.getEmail().isBlank()){
+            throw new BadRequestException("Name Can't Be Null Or Empty");
+        }
+        if(user.getEmail() == null || user.getEmail().isBlank()){
+            throw new BadRequestException("Email Can't Be Null Or Empty");
+        }
+        if(user.getPassword() == null || user.getPassword().isBlank()){
+            throw new BadRequestException("Password Can't Be Null Or Empty");
+        }
+        if(user.getRole() == null){
+            throw new BadRequestException("Role Can't Be Null");
+        }
+        UserEntity userEntity = userRepository.findByNit(user.getNit()).orElseThrow(this::nonExistingUser);
+        userEntity.setNit(user.getNit());
+        userEntity.setName(user.getName());
+        userEntity.setEmail(user.getEmail());
         userEntity.setPassword(user.getPassword());
+        userEntity.setRole(roleRepository.findById(user.getRole()).orElseThrow(this::nonExistingRole));
 
-        RoleEntity roleEntity = roleRepository.findById(role)
-        .orElseThrow(this::nonExistingRole);
-        userEntity.setRole(roleEntity);
-        userRepository.save(userEntity);
     }
-
-    public void modifyUserNit(@NonNull String newId, @NonNull String oldNit){
         
-        UserEntity userEntity = userRepository.findByNit(oldNit)
-        .orElseThrow(this::nonExistingUser);
-
-        userEntity.setNit(newId);
-        userRepository.save(userEntity);
-    }
-
-    public void modifyUserName(@NonNull String nit, @NonNull String name){
-        UserEntity userEntity = userRepository.findByNit(nit)
-        .orElseThrow(this::nonExistingUser);
-
-        userEntity.setName(name);
-        userRepository.save(userEntity);
-    }
-
-    public void modifyUserMail(@NonNull String nit, @NonNull String mail){
-        UserEntity userEntity = userRepository.findByNit(nit)
-        .orElseThrow(this::nonExistingUser);
-        
-        userEntity.setEmail(mail);
-        userRepository.save(userEntity);
-    }
-
-    public void modifyUserPassword(@NonNull String nit, @NonNull String password){
-        UserEntity userEntity = userRepository.findByNit(nit)
-        .orElseThrow(this::nonExistingUser);
-
-        userEntity.setPassword(password);
-        userRepository.save(userEntity);
-    }
-    
     /* DELETE METHOD */
     @Override
     public void deleteUser(@NonNull String nit) {
+        if (!userRepository.existsByNit(nit)){
+            throw nonExistingUser();
+        }
         userRepository.deleteByNit(nit);
     }
 }
