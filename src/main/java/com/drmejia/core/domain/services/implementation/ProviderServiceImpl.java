@@ -129,6 +129,9 @@ public class ProviderServiceImpl implements ProviderService {
     /*Delete Provider from DB */
     @Override
     public void deleteProvider(@NonNull Long idProvider) {
+        if(!providerRepository.existsById(idProvider)){
+            throw nonExistingProvider();
+        }
         providerRepository.deleteById(idProvider);
     }
     

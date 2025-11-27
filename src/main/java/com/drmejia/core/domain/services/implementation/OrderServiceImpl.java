@@ -175,6 +175,9 @@ public class OrderServiceImpl implements OrderService{
     /* DELETE METHOD */
     @Override
     public void deleteOrder(@NonNull Long idOrder) {
+        if (!orderRepository.existsById(idOrder)) {
+            throw nonExistingOrder();
+        }
         orderRepository.deleteById(idOrder);
     }
     

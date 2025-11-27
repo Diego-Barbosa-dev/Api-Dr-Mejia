@@ -181,6 +181,9 @@ public class EyeServiceImpl implements EyeService{
     /* DELETE METHOD */
     @Override
     public void deleteEye(@NonNull Long idEye) {
+        if(!eyeRepository.existsById(idEye)){
+            throw nonExistingEye();
+        }
         eyeRepository.deleteById(idEye);
     }
     

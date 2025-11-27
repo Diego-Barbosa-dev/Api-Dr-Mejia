@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+##### Local Configuration ####
+.env
+assets/
+dashboard.html
+index.html
+patients.html

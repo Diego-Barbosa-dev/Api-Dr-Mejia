@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -77,7 +78,16 @@ public class PatientRestController {
 
         patientService.updatePatient(patient);
         
-        return null;
+        return ResponseEntity.ok(patient);
+    }
+
+    @PatchMapping("/{document}")
+    public ResponseEntity<?> patchPatient(@PathVariable("document") String document, @RequestBody Patient patient){
+        patient.setDocument(document);
+
+        patientService.modifyPatient(patient);
+
+        return ResponseEntity.ok(patient);
     }
 
     @DeleteMapping("/{document}")

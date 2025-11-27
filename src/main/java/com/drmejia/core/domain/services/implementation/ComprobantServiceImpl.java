@@ -96,6 +96,9 @@ public class ComprobantServiceImpl implements ComprobantService{
 
     @Override
     public void deleteComprobant(@NonNull Long idComprobant){
+        if(!comprobantRepository.existsById(idComprobant)){
+            throw nonExistingComprobant();
+        }
         comprobantRepository.deleteById(idComprobant);
     }
 }

@@ -15,7 +15,6 @@ import com.drmejia.core.persistence.entities.PaymentEntity;
 import com.drmejia.core.persistence.repository.ComprobantRepository;
 import com.drmejia.core.persistence.repository.OrderRepository;
 import com.drmejia.core.persistence.repository.PaymentRepository;
-import com.drmejia.core.persistence.repository.ProviderRepository;
 import lombok.NonNull;
 
 @Service

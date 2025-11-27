@@ -33,7 +33,7 @@ public class PaymentRestController {
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<?> getById(@PathVariable("id") Long id){
+    public ResponseEntity<?> getById(@PathVariable("id") Long id){
         return paymentService.getAllPayments().stream()
             .filter(payment -> payment.getIdPayment().equals(id))
             .findFirst()

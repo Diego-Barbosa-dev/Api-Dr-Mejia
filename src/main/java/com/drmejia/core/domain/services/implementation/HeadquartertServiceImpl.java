@@ -96,6 +96,9 @@ public class HeadquartertServiceImpl implements HeadquarterService {
     /* DELETE METHOD */
     @Override
     public void deleteHeadquarter(@NonNull Long idHeadquarter) {
+        if (!headquaterRepository.existsById(idHeadquarter)) {
+            throw nonExistingHeadquarter();
+        }
         headquaterRepository.deleteById(idHeadquarter);
     }
     
