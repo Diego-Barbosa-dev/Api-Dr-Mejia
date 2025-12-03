@@ -10,10 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-    private Long idRole;
+    private Long id;
     private String name;
 
     public boolean hasNullAttributes() {
-        return this.idRole == null || this.name == null || this.name.isBlank();
+        return this.id == null ||
+               this.name == null || this.name.isBlank();
     }
 }

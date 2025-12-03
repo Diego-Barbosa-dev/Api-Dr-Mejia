@@ -15,6 +15,8 @@ public class Patient {
     String name;
     String email;
     String address;
+    String notes;
+
 
     public boolean hasNullAttributes() {
         return this.document == null || this.document.isBlank() ||

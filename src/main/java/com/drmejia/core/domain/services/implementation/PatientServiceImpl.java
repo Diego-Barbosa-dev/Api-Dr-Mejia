@@ -13,6 +13,7 @@ import com.drmejia.core.exceptions.ResourceNotFoundException;
 import com.drmejia.core.persistence.entities.PatientEntity;
 import com.drmejia.core.persistence.repository.PatientRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 
 
@@ -55,7 +56,8 @@ public class PatientServiceImpl implements PatientService {
             patientEntity.getDocument(),
             patientEntity.getName(),
             patientEntity.getEmail(),
-            patientEntity.getAddress() 
+            patientEntity.getAddress(),
+            patientEntity.getNotes()
             );
 
             patients.add(patient);
@@ -86,6 +88,13 @@ public class PatientServiceImpl implements PatientService {
         if(patient.getAddress() != null && !patient.getAddress().isBlank()){
             patientEntity.setAddress(patient.getAddress());
         }
+        if(patient.getNotes() != null && !patient.getNotes().isBlank()){
+            patientEntity.setNotes(patient.getNotes());
+        }
+
+        if (patientEntity == null) {
+            throw new BadRequestException("No fields to update");
+        }
         
         patientRepository.save(patientEntity);
     }
@@ -114,48 +123,16 @@ public class PatientServiceImpl implements PatientService {
         patientEntity.setEmail(patient.getEmail());
         patientEntity.setAddress(patient.getAddress());
         patientEntity.setName(patient.getName());
+        patientEntity.setNotes(patient.getNotes());
         
         patientRepository.save(patientEntity);
     }
 
-    public void modifyPatientId(Long newId, Long oldId){
-        PatientEntity patientEntity = patientRepository.findById(oldId).
-        orElseThrow(this::nonExistingPatient);
-
-        patientEntity.setIdPatient(newId);
-        patientRepository.save(patientEntity);
-    }
-
-    public void modifyPatientDocument(String newDocument, String oldDocument){
-        PatientEntity patientEntity = patientRepository.findByDocument(oldDocument)
-        .orElseThrow(this::nonExistingPatient);
-
-        patientEntity.setDocument(newDocument);
-        patientRepository.save(patientEntity);
-    }
-
-    public void modifyPatientName(@NonNull String document, @NonNull String name){
-        PatientEntity patientEntity = patientRepository.findByDocument(document)
-        .orElseThrow(this::nonExistingPatient);
-
-        patientEntity.setName(name);
-        patientRepository.save(patientEntity);
-    }
-
-    public void modifyPatientAddress(@NonNull String document, @NonNull String address){
-        PatientEntity patientEntity = patientRepository.findByDocument(document)
-        .orElseThrow(this::nonExistingPatient);
-
-        patientEntity.setAddress(address);
-        patientRepository.save(patientEntity);
-    }
-
-
 
     /* Delete an existing patient from the database */
-
+    @Transactional
     @Override
-    public void deletePatient(String document) {
+    public void deletePatient(@NonNull String document) {
         if(!patientRepository.existsByDocument(document)){
             throw nonExistingPatient();
         }

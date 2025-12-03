@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.drmejia.core.domain.models.User;
 import com.drmejia.core.domain.services.interfaces.UserService;
@@ -14,6 +17,7 @@ import com.drmejia.core.persistence.entities.UserEntity;
 import com.drmejia.core.persistence.repository.RoleRepository;
 import com.drmejia.core.persistence.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 
 @Service
@@ -26,6 +30,7 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private RoleRepository roleRepository;
+    
 
     private ResourceNotFoundException nonExistingUser(){
         return new ResourceNotFoundException("User Not Found In DataBase");
@@ -73,7 +78,7 @@ public class UserServiceImpl implements UserService{
             user.setName(userEntity.getName());
             user.setEmail(userEntity.getEmail());
             user.setPassword(userEntity.getPassword());
-            user.setRole(userEntity.getRole().getIdRol());
+            user.setRole(userEntity.getRole().getId());
             users.add(user);
         }
         return users;
@@ -81,26 +86,37 @@ public class UserServiceImpl implements UserService{
 
     /* UPDATE Methods */
     @Override
-    public void modifyUser(User user) {
+    public void modifyUser(User user) throws BadRequestException {
+
         /* PATCH HTTP METHOD */
-        if (user.getNit().isBlank() && user.getNit() == null ) {
+
+        if (user.getNit() == null || user.getNit().isBlank()) {
+            throw new BadRequestException("Nit Can't Be Null Or Empty");
         }
-        UserEntity userEntity = userRepository.findByNit(user.getNit()).orElseThrow(this::nonExistingUser);
-        if (!user.getName().isBlank() && user.getName() != null) {
+
+        UserEntity userEntity = userRepository.findByNit(user.getNit())
+                .orElseThrow(this::nonExistingUser);
+
+        if (user.getName() != null && !user.getName().isBlank()) {
             userEntity.setName(user.getName());
         }
-        if (!user.getEmail().isBlank() && user.getEmail() != null) {
+
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
             userEntity.setEmail(user.getEmail());
         }
-        if(!user.getPassword().isBlank() && user.getPassword() != null){
+
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
             userEntity.setPassword(user.getPassword());
         }
-        if(user.getRole() != null){
-            userEntity.setRole(roleRepository.findById(user.getRole()).orElseThrow(this::nonExistingRole));
+
+        if (user.getRole() != null) {
+            userEntity.setRole(
+                roleRepository.findById(user.getRole())
+                        .orElseThrow(this::nonExistingRole)
+            );
         }
-        if (userEntity != null){
-            userRepository.save(userEntity);
-        }
+
+        userRepository.save(userEntity);
 
     }
 
@@ -129,9 +145,12 @@ public class UserServiceImpl implements UserService{
         userEntity.setPassword(user.getPassword());
         userEntity.setRole(roleRepository.findById(user.getRole()).orElseThrow(this::nonExistingRole));
 
+        userRepository.save(userEntity);
+
     }
         
     /* DELETE METHOD */
+    @Transactional
     @Override
     public void deleteUser(@NonNull String nit) {
         if (!userRepository.existsByNit(nit)){
@@ -139,5 +158,26 @@ public class UserServiceImpl implements UserService{
         }
         userRepository.deleteByNit(nit);
     }
+
+    /* SECURITY METHODS*/
+    @Override
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException{
+        UserEntity userEntity;
+
+        if (userName.contains("@")) {
+            userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+        } else {
+            userEntity = userRepository.findByName(userName)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+        }
+
+        return new org.springframework.security.core.userdetails.User(
+                userEntity.getName().toLowerCase(),
+                userEntity.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + userEntity.getRole().getName().toUpperCase()))
+        );
+
+    } 
 }
 

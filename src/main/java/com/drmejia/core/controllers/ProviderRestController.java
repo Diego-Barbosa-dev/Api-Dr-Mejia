@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/providers")
+@RequestMapping("api/providers")
 public class ProviderRestController {
     
     @Autowired
@@ -89,7 +89,7 @@ public class ProviderRestController {
         return ResponseEntity.ok(provider);
     }
 
-    @PatchMapping("/edit/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> modifyProvider(@PathVariable Long id, @RequestBody Provider provider){
         provider.setIdProvider(id);
         providerService.modifyProvider(provider);

@@ -2,6 +2,8 @@ package com.drmejia.core.domain.models;
 
 import java.time.LocalDate;
 
+import com.drmejia.core.enums.OrderState;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,7 @@ public class Order {
     private LocalDate shippingDate;
     private LocalDate deliveryDate;
     private Integer daysPassed;
+    private OrderState state;
 
     public boolean hasNullAttributes() {
         return this.idOrder == null ||
@@ -30,6 +33,7 @@ public class Order {
                this.idProvider == null ||
                this.shippingDate == null ||
                this.deliveryDate == null ||
-               this.daysPassed == null;
+               this.daysPassed == null ||
+               this.state == null;
     }
 }

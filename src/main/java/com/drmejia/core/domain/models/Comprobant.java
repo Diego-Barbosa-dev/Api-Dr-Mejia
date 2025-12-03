@@ -10,10 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comprobant {
-    private Long idComprobant;
+    private Long id;
     private String name;
 
     public boolean hasNullAttributes() {
-        return this.idComprobant == null || this.name == null || this.name.isBlank();
+        return this.id == null || this.name == null || this.name.isBlank();
     }
 }

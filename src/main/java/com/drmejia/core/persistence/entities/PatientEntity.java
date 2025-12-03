@@ -31,4 +31,7 @@ public class PatientEntity {
 
     @Column(nullable = false)
     private String address;
+
+    @Column(nullable = true)
+    private String notes;
 }

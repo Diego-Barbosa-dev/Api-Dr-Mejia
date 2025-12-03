@@ -3,6 +3,7 @@ package com.drmejia.core.controllers;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,11 +24,14 @@ import com.drmejia.core.exceptions.ResourceNotFoundException;
 
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/users")
 public class UserRestController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     /*
      * Cada método de los controladores debe devolver
@@ -66,11 +70,6 @@ public class UserRestController {
     @GetMapping("/{nit}")
     public ResponseEntity<?> getByNit(@PathVariable("nit") String nit) throws BadRequestException{
         
-        if(nit.length() < 3){
-            throw new BadRequestException("El parametro debe tener al menos 3 letras"); 
-        }
-
-
         return userService.getAllUsers().stream().
                     filter(user -> user.getNit().toLowerCase().contains(nit)).
                     findFirst()
@@ -103,6 +102,7 @@ public class UserRestController {
             throw new BadRequestException("El correo electrónico no es válido");
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.saveUser(user);
         
         /*
@@ -136,7 +136,7 @@ public class UserRestController {
     }
 
     @PatchMapping("/{nit}")
-    public ResponseEntity<?> patchUser(@PathVariable("nit") String nit, @RequestBody User user){
+    public ResponseEntity<?> patchUser(@PathVariable("nit") String nit, @RequestBody User user) throws BadRequestException{
         user.setNit(nit);
         userService.modifyUser(user);
         return ResponseEntity.ok(user);

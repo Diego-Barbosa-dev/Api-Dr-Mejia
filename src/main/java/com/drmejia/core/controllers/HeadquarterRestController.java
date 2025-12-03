@@ -21,16 +21,18 @@ import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 
 @RestController
-@RequestMapping("/headquarters")
+@RequestMapping("api/headquarters")
 public class HeadquarterRestController {
     
     @Autowired
     private HeadquarterService headquarterService;
 
+
     @GetMapping
     public ResponseEntity<?> getHeadquarters() {
         return ResponseEntity.ok(headquarterService.getAllHeadquarters());
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
@@ -40,6 +42,7 @@ public class HeadquarterRestController {
             .map(ResponseEntity::ok)
             .orElseThrow(() -> new ResourceNotFoundException("Headquarter: " + id + " Not Found"));
     }
+
 
     @PostMapping
     public ResponseEntity<?> postHeadquarter(@RequestBody Headquarter headquarter) {
@@ -64,6 +67,7 @@ public class HeadquarterRestController {
         return ResponseEntity.created(location).body(headquarter);
     }
 
+
     @PutMapping("/{id}")
     public ResponseEntity<?> putHeadquarter(@PathVariable("id") Long id, @RequestBody Headquarter headquarter) {
         headquarter.setIdHeadquarter(id);
@@ -74,6 +78,7 @@ public class HeadquarterRestController {
         }
         return ResponseEntity.ok(headquarter);
     }
+
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> patchHeadquarter(@PathVariable("id") Long id, @RequestBody Headquarter headquarter) {
@@ -86,9 +91,11 @@ public class HeadquarterRestController {
         return ResponseEntity.ok(headquarter);
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteHeadquarter(@PathVariable("id") Long id) {
         headquarterService.deleteHeadquarter(id);
         return ResponseEntity.noContent().build();
     }
+    
 }

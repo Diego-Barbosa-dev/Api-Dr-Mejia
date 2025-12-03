@@ -63,11 +63,11 @@ public class ComprobantServiceImpl implements ComprobantService{
     @Override
     public void modifyComprobant(Comprobant comprobant) throws BadRequestException{
         /* PATCH HTTP METHOD */
-        if(comprobant.getIdComprobant() == null){
+        if(comprobant.getId() == null){
             throw new BadRequestException("Comprobant Id Can't Be Null");
         }
         ComprobantEntity comprobantEntity = comprobantRepository
-        .findById(comprobant.getIdComprobant())
+        .findById(comprobant.getId())
         .orElseThrow(this::nonExistingComprobant);
 
         if(comprobant.getName() != null && !comprobant.getName().isBlank()){
@@ -79,7 +79,7 @@ public class ComprobantServiceImpl implements ComprobantService{
     @Override
     public void updateComprobant(Comprobant comprobant) throws BadRequestException{
         /* PUT HTTP METHOD */
-        if(comprobant.getIdComprobant() == null){
+        if(comprobant.getId() == null){
             throw new BadRequestException("Comprobant Id Can't Be Null");
         }
         if(comprobant.getName() == null || comprobant.getName().isBlank()){
@@ -87,7 +87,7 @@ public class ComprobantServiceImpl implements ComprobantService{
         }
 
         ComprobantEntity comprobantEntity = comprobantRepository
-        .findById(comprobant.getIdComprobant())
+        .findById(comprobant.getId())
         .orElseThrow(this::nonExistingComprobant);
 
         comprobantEntity.setName(comprobant.getName());

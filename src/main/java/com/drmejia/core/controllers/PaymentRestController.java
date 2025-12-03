@@ -22,8 +22,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/payments")
+@RequestMapping("api/payments")
 public class PaymentRestController {
+    
     @Autowired
     private PaymentService paymentService;
 

@@ -22,9 +22,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-
 @RestController
-@RequestMapping("/comprobants")
+@RequestMapping("api/comprobants")
 public class ComprobantRestController {
     
     @Autowired
@@ -39,7 +38,7 @@ public class ComprobantRestController {
     public ResponseEntity<?> getById(@PathVariable("id") Long id){
         return comprobantService.getAllComprobants()
             .stream()
-            .filter(comprobant -> comprobant.getIdComprobant().equals(id))
+            .filter(comprobant -> comprobant.getId().equals(id))
             .findFirst()
             .map(ResponseEntity::ok)
             .orElseThrow(()-> new ResourceNotFoundException("Comprobant: " + id + " Not Found"));
@@ -49,7 +48,7 @@ public class ComprobantRestController {
     public ResponseEntity<?> postComprobant(@RequestBody Comprobant comprobant){
         if(comprobant.hasNullAttributes()){
             throw new BadRequestException("Null Attributes Are Not Allowed"
-                + "\nId: " + comprobant.getIdComprobant()
+                + "\nId: " + comprobant.getId()
                 + "\nName: " + comprobant.getName()
             );
         }
@@ -57,14 +56,14 @@ public class ComprobantRestController {
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
-            .buildAndExpand(comprobant.getIdComprobant())
+            .buildAndExpand(comprobant.getId())
             .toUri();
         return ResponseEntity.created(location).body(comprobant);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> putComprobant(@PathVariable("id") Long id, @RequestBody Comprobant comprobant){
-        comprobant.setIdComprobant(id);
+        comprobant.setId(id);
         try {
             comprobantService.updateComprobant(comprobant);
         } catch (BadRequestException e) {
@@ -75,7 +74,7 @@ public class ComprobantRestController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> patchComprobant(@PathVariable("id") Long id, @RequestBody Comprobant comprobant){
-        comprobant.setIdComprobant(id);
+        comprobant.setId(id);
         try {
             comprobantService.modifyComprobant(comprobant);
         } catch (BadRequestException e) {

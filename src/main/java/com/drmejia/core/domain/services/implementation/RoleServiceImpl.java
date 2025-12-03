@@ -13,6 +13,7 @@ import com.drmejia.core.exceptions.ResourceNotFoundException;
 import com.drmejia.core.persistence.entities.RoleEntity;
 import com.drmejia.core.persistence.repository.RoleRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 
 @Service
@@ -31,10 +32,8 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public void saveRole(Role role) {
-        RoleEntity roleEntity = new RoleEntity(
-            role.getIdRole(),
-            role.getName()
-        );
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(role.getName());
 
         roleRepository.save(roleEntity);
     }
@@ -50,7 +49,7 @@ public class RoleServiceImpl implements RoleService {
        for (RoleEntity roleEntity : roleEntities){
             
             Role role = new Role(
-            roleEntity.getIdRol(),
+            roleEntity.getId(),
             roleEntity.getName()
             );
 
@@ -66,10 +65,10 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void modifyRole(Role role) throws BadRequestException{
         /* PATCH HTTP  */
-        if(role.getIdRole() == null){
+        if(role.getId() == null){
             throw new BadRequestException("Role Id Can't Be Null");
         }
-        RoleEntity roleEntity = roleRepository.findById(role.getIdRole()).orElseThrow(this::nonExistingRole);
+        RoleEntity roleEntity = roleRepository.findById(role.getId()).orElseThrow(this::nonExistingRole);
         if(!role.getName().isBlank() && role.getName() != null){
             roleEntity.setName(role.getName());
         }
@@ -79,19 +78,19 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void updateRole(Role role) throws BadRequestException{
         /* PUT METHOD */
-        if(role.getIdRole() == null){
+        if(role.getId() == null){
             throw new BadRequestException("Role Id Can't Be Null");
         }
         if (role.getName() == null || role.getName().isBlank()){
             throw new BadRequestException("Role Name Can't Be Null");
         }
-        RoleEntity roleEntity = roleRepository.findById(role.getIdRole()).orElseThrow(this::nonExistingRole);
+        RoleEntity roleEntity = roleRepository.findById(role.getId()).orElseThrow(this::nonExistingRole);
         roleEntity.setName(role.getName());
         roleRepository.save(roleEntity);
     }
     
     /* Delete method */ 
-
+    @Transactional
     @Override
     public void deleteRole(@NonNull Long id) {
         if (!roleRepository.existsById(id)) {

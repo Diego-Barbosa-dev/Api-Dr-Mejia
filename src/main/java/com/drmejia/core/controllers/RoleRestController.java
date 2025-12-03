@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
-@RequestMapping("/roles")
+@RequestMapping("api/roles")
 public class RoleRestController {
     @Autowired
     private RoleService roleService;
@@ -36,7 +36,7 @@ public class RoleRestController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable("id") Long id){
         return roleService.getAllRoles().stream()
-            .filter(role -> role.getIdRole().equals(id))
+            .filter(role -> role.getId().equals(id))
             .findFirst()
             .map(ResponseEntity::ok)
             .orElseThrow(() -> new ResourceNotFoundException("Role: " + id + " Not Found"));
@@ -46,23 +46,24 @@ public class RoleRestController {
     public ResponseEntity<?> postRole(@RequestBody Role role) throws BadRequestException{
         if(role.hasNullAttributes()){
             throw new BadRequestException("Null Attributes Are Not Allowed"
-                + "\nId: " + role.getIdRole()
-                + "\nname: " + role.getName()
+                + "\nId: " + role.getId()
+                + "\nName: " + role.getName()
             );
+
         }
 
         roleService.saveRole(role);
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
-            .buildAndExpand(role.getIdRole())
+            .buildAndExpand(role.getId())
             .toUri();
         return ResponseEntity.created(location).body(role);
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<?> putRole(@PathVariable Long id, @RequestBody Role role) {
-        role.setIdRole(id);
+        role.setId(id);
 
         try {
             roleService.updateRole(role);
@@ -75,7 +76,7 @@ public class RoleRestController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> patchRole(@PathVariable Long id, @RequestBody Role role) throws BadRequestException  {
-        role.setIdRole(id);
+        role.setId(id);
         try {
             roleService.modifyRole(role);
         } catch (org.apache.coyote.BadRequestException | BadRequestException e) {

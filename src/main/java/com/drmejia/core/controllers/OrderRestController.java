@@ -21,7 +21,7 @@ import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("api/orders")
 public class OrderRestController {
     
     @Autowired
@@ -53,6 +53,7 @@ public class OrderRestController {
                 + "\nShipping Date: " + order.getShippingDate()
                 + "\nDelivery Date: " + order.getDeliveryDate()
                 + "\nDays Passed: " + order.getDaysPassed()
+                + "\nState: " + order.getState()
             );
         }
 
@@ -63,7 +64,10 @@ public class OrderRestController {
         if (order.getDocumentPatient().length() < 3) {
             throw new BadRequestException("Document Patient Must Have At Least 3 Characters");
         }
-
+        if (order.getState() == null) {
+            throw new BadRequestException("Order State Can't Be Null");
+        }
+        
         orderService.saveOrder(order);
         
         URI location = ServletUriComponentsBuilder

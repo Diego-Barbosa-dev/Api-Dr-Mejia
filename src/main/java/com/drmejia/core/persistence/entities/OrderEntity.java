@@ -2,6 +2,9 @@ package com.drmejia.core.persistence.entities;
 
 import java.time.LocalDate;
 
+import com.drmejia.core.domain.models.Order;
+import com.drmejia.core.enums.OrderState;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -50,5 +53,8 @@ public class OrderEntity {
 
     @Column(nullable = true)
     private Integer daysPassed;
+
+    @Column(nullable = false)
+    private OrderState state;
 
 }

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
-@RequestMapping("/patients")
+@RequestMapping("api/patients")
 public class PatientRestController {
 
     @Autowired //Autowired para que se asigne la dependencia de manera automática
@@ -54,6 +54,7 @@ public class PatientRestController {
                 + "\nName: " + patient.getName()
                 + "\nAddress: " + patient.getAddress()
                 + "\nEmail: " + patient.getEmail()
+                
             );
         }
         if(patient.getDocument().length() <3){

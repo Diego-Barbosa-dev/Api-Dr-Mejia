@@ -21,16 +21,18 @@ import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 
 @RestController
-@RequestMapping("/eyes")
+@RequestMapping("api/eyes")
 public class EyeRestController {
     
     @Autowired
     private EyeService eyeService;
 
+    
     @GetMapping
     public ResponseEntity<?> getEyes() {
         return ResponseEntity.ok(eyeService.getAllEyes());
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
@@ -40,6 +42,7 @@ public class EyeRestController {
             .map(ResponseEntity::ok)
             .orElseThrow(() -> new ResourceNotFoundException("Eye: " + id + " Not Found"));
     }
+
 
     @PostMapping
     public ResponseEntity<?> postEye(@RequestBody Eye eye) {
@@ -73,6 +76,7 @@ public class EyeRestController {
         return ResponseEntity.created(location).body(eye);
     }
 
+
     @PutMapping("/{id}")
     public ResponseEntity<?> putEye(@PathVariable("id") Long id, @RequestBody Eye eye) {
         eye.setIdEye(id);
@@ -83,6 +87,7 @@ public class EyeRestController {
         }
         return ResponseEntity.ok(eye);
     }
+
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> patchEye(@PathVariable("id") Long id, @RequestBody Eye eye) {
@@ -95,9 +100,11 @@ public class EyeRestController {
         return ResponseEntity.ok(eye);
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEye(@PathVariable("id") Long id) {
         eyeService.deleteEye(id);
         return ResponseEntity.noContent().build();
     }
+    
 }

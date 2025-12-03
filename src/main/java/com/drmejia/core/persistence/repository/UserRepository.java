@@ -7,9 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import com.drmejia.core.persistence.entities.UserEntity;
 
+
+
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long>{
     Optional<UserEntity> findByNit(String nit);
     Optional<UserEntity> deleteByNit(String nit);
     boolean existsByNit(String nit);
+    Optional<UserEntity> findByName(String name);
+    Optional<UserEntity> findByEmail(String email);
 }

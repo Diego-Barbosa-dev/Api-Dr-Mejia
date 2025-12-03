@@ -68,6 +68,7 @@ public class OrderServiceImpl implements OrderService{
         orderEntity.setShippingDate(order.getShippingDate());
         orderEntity.setDeliveryDate(order.getDeliveryDate());
         orderEntity.setDaysPassed(order.getDaysPassed());
+        orderEntity.setState(order.getState());
 
         orderRepository.save(orderEntity);
     }
@@ -89,6 +90,7 @@ public class OrderServiceImpl implements OrderService{
             order.setShippingDate(orderEntity.getShippingDate());
             order.setDeliveryDate(orderEntity.getDeliveryDate());
             order.setDaysPassed(orderEntity.getDaysPassed());
+            order.setState(orderEntity.getState());
 
             orders.add(order);
         }
@@ -127,6 +129,9 @@ public class OrderServiceImpl implements OrderService{
         if(order.getDaysPassed() != null){
             orderEntity.setDaysPassed(order.getDaysPassed());
         }
+        if(order.getState() != null){
+            orderEntity.setState(order.getState());
+        }
         
         orderRepository.save(orderEntity);
     }
@@ -158,6 +163,9 @@ public class OrderServiceImpl implements OrderService{
         if(order.getDaysPassed() == null){
             throw new BadRequestException("Order Days Passed Can't Be Null");
         }
+        if(order.getState() == null){
+            throw new BadRequestException("Order State Can't Be Null");
+        }
 
         OrderEntity orderEntity = orderRepository.findById(order.getIdOrder()).orElseThrow(this::nonExistingOrder);
 
@@ -168,6 +176,7 @@ public class OrderServiceImpl implements OrderService{
         orderEntity.setShippingDate(order.getShippingDate());
         orderEntity.setDeliveryDate(order.getDeliveryDate());
         orderEntity.setDaysPassed(order.getDaysPassed());
+        orderEntity.setState(order.getState());
         
         orderRepository.save(orderEntity);
     }
