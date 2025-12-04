@@ -17,10 +17,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-import com.drmejia.core.domain.models.User;
-
-import com.drmejia.core.domain.services.interfaces.UserService;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
+import com.drmejia.core.models.User;
+import com.drmejia.core.services.interfaces.UserService;
 
 
 @RestController

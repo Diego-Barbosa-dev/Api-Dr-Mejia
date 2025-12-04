@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.drmejia.core.domain.models.Order;
-import com.drmejia.core.domain.services.interfaces.OrderService;
 import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
+import com.drmejia.core.models.Order;
+import com.drmejia.core.services.interfaces.OrderService;
 
 @RestController
 @RequestMapping("api/orders")

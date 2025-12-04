@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.drmejia.core.domain.models.Patient;
-import com.drmejia.core.domain.services.interfaces.PatientService;
 import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
+import com.drmejia.core.models.Patient;
+import com.drmejia.core.services.interfaces.PatientService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

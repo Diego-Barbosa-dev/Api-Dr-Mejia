@@ -2,8 +2,8 @@ package com.drmejia.core.persistence.entities;
 
 import java.time.LocalDate;
 
-import com.drmejia.core.domain.models.Order;
 import com.drmejia.core.enums.OrderState;
+import com.drmejia.core.models.Order;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

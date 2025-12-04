@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.drmejia.core.domain.models.Comprobant;
-import com.drmejia.core.domain.services.interfaces.ComprobantService;
 import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
+import com.drmejia.core.models.Comprobant;
+import com.drmejia.core.services.interfaces.ComprobantService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

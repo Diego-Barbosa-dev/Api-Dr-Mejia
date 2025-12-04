@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.drmejia.core.domain.models.Headquarter;
-import com.drmejia.core.domain.services.interfaces.HeadquarterService;
 import com.drmejia.core.exceptions.BadRequestException;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
+import com.drmejia.core.models.Headquarter;
+import com.drmejia.core.services.interfaces.HeadquarterService;
 
 @RestController
 @RequestMapping("api/headquarters")
