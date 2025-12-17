@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 import com.drmejia.core.models.User;
+import com.drmejia.core.persistence.entities.HeadquarterEntity;
 import com.drmejia.core.persistence.entities.RoleEntity;
 import com.drmejia.core.persistence.entities.UserEntity;
+import com.drmejia.core.persistence.repository.HeadquaterRepository;
 import com.drmejia.core.persistence.repository.RoleRepository;
 import com.drmejia.core.persistence.repository.UserRepository;
 import com.drmejia.core.services.interfaces.UserService;
@@ -31,6 +33,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private RoleRepository roleRepository;
+    
+    @Autowired
+    private HeadquaterRepository headquarterRepository;
     
 
     private ResourceNotFoundException nonExistingUser(){
@@ -62,6 +67,12 @@ public class UserServiceImpl implements UserService{
         userEntity.setEmail(user.getEmail());
         userEntity.setPassword(user.getPassword());
         userEntity.setRole(roleEntity);
+        
+        if(user.getIdHeadquarter() != null){
+            HeadquarterEntity hqEntity = headquarterRepository.findById(user.getIdHeadquarter()).orElse(null);
+            userEntity.setHeadquarter(hqEntity);
+        }
+        
         userRepository.save(userEntity);
         
     }
@@ -80,6 +91,7 @@ public class UserServiceImpl implements UserService{
             user.setEmail(userEntity.getEmail());
             user.setPassword(userEntity.getPassword());
             user.setRole(userEntity.getRole().getId());
+            user.setIdHeadquarter(userEntity.getHeadquarter() != null ? userEntity.getHeadquarter().getIdHeadquarters() : null);
             users.add(user);
         }
         return users;
@@ -115,6 +127,11 @@ public class UserServiceImpl implements UserService{
                 roleRepository.findById(user.getRole())
                         .orElseThrow(this::nonExistingRole)
             );
+        }
+        
+        if (user.getIdHeadquarter() != null) {
+            HeadquarterEntity hqEntity = headquarterRepository.findById(user.getIdHeadquarter()).orElse(null);
+            userEntity.setHeadquarter(hqEntity);
         }
 
         userRepository.save(userEntity);
@@ -158,6 +175,16 @@ public class UserServiceImpl implements UserService{
             throw nonExistingUser();
         }
         userRepository.deleteByNit(nit);
+    }
+    
+    @Override
+    public UserEntity findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(this::nonExistingUser);
+    }
+    
+    @Override
+    public UserEntity findByName(String name) {
+        return userRepository.findByName(name).orElseThrow(this::nonExistingUser);
     }
 
     /* SECURITY METHODS*/

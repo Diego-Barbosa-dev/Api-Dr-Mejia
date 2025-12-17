@@ -1,8 +1,10 @@
 package com.drmejia.core.enums;
 
 public enum OrderState {
-    PENDING,
-    IN_PROGRESS,
-    COMPLETED,
+    CREATED,
+    SENT_TO_LAB,
+    IN_PROCESS,
+    RETURNING,
+    RECEIVED,
     CANCELLED
 }

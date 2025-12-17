@@ -49,7 +49,7 @@ public class PaymentRestController {
             throw new BadRequestException("Null Attributes Are Not Allowed"
                 + "\nId: " + payment.getIdPayment()
                 + "\nOrder: " + payment.getIdOrder()
-                + "\nComprobant: " + payment.getIdComprobant()
+                + "\nAmount: " + payment.getAmount()
                 + "\nDate: " + payment.getPaymentDate()
             );
         }

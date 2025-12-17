@@ -50,8 +50,8 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             ) // ⬅ Muy importante en JWT
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/", "/**/*.html").permitAll()
-                    .requestMatchers("/assets/**").permitAll()
+                    .requestMatchers("/", "/login.html", "/**/*.html").permitAll()
+                    .requestMatchers("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg", "/**/*.svg", "/favicon.ico", "/assets/**").permitAll()
                     .requestMatchers("/auth/**").permitAll() // ⬅ Login sin token
                     .requestMatchers("/api/**").authenticated() // ⬅ lo demás necesita JWT
                     .anyRequest().authenticated()

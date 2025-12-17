@@ -35,11 +35,17 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void savePatient(Patient patient) {
+        // Verificar si el paciente ya existe
+        if (patientRepository.existsByDocument(patient.getDocument())) {
+            throw new BadRequestException("Patient with document " + patient.getDocument() + " already exists");
+        }
+        
         PatientEntity patientEntity = new PatientEntity();
         patientEntity.setName(patient.getName());
         patientEntity.setEmail(patient.getEmail());
         patientEntity.setDocument(patient.getDocument());
         patientEntity.setAddress(patient.getAddress());
+        patientEntity.setNotes(patient.getNotes() != null ? patient.getNotes() : "");
 
         patientRepository.save(patientEntity);
     }

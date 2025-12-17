@@ -50,6 +50,8 @@ public class OrderRestController {
                 + "\nDocument Patient: " + order.getDocumentPatient()
                 + "\nHeadquarter: " + order.getIdHeadquarter()
                 + "\nProvider: " + order.getIdProvider()
+                + "\nFrame Type: " + order.getFrameType()
+                + "\nLens Type: " + order.getLensType()
                 + "\nShipping Date: " + order.getShippingDate()
                 + "\nDelivery Date: " + order.getDeliveryDate()
                 + "\nDays Passed: " + order.getDaysPassed()

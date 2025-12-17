@@ -1,6 +1,5 @@
 package com.drmejia.core.services.implementation;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.drmejia.core.exceptions.ResourceNotFoundException;
 import com.drmejia.core.models.Payment;
 import com.drmejia.core.persistence.entities.PaymentEntity;
-import com.drmejia.core.persistence.repository.ComprobantRepository;
 import com.drmejia.core.persistence.repository.OrderRepository;
 import com.drmejia.core.persistence.repository.PaymentRepository;
 import com.drmejia.core.services.interfaces.PaymentService;
@@ -21,12 +19,8 @@ import lombok.NonNull;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-
     @Autowired
     private PaymentRepository paymentRepository;
-
-    @Autowired
-    private ComprobantRepository comprobantRepository;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -41,15 +35,15 @@ public class PaymentServiceImpl implements PaymentService {
      ************************************************************
      */
 
-
     /* CREATE METHOD */
     @Override
     public void savePayment(Payment payment) {
         PaymentEntity paymentEntity = new PaymentEntity();
 
         paymentEntity.setPaymentDate(payment.getPaymentDate());
+        paymentEntity.setAmount(payment.getAmount());
+        paymentEntity.setVoucher(payment.getVoucher());
         paymentEntity.setOrder(orderRepository.findById(payment.getIdOrder()).orElseThrow(this::nonExistingPayment));
-        paymentEntity.setComprobant(comprobantRepository.findById(payment.getIdComprobant()).orElseThrow(this::nonExistingPayment));
         paymentRepository.save(paymentEntity);
     }
 
@@ -64,7 +58,9 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setIdPayment(paymentEntity.getIdPayment());
             payment.setPaymentDate(paymentEntity.getPaymentDate());
             payment.setIdOrder(paymentEntity.getOrder().getIdOrder());
-            payment.setIdComprobant(paymentEntity.getComprobant().getIdComprobant());
+            payment.setAmount(paymentEntity.getAmount());
+            payment.setVoucher(paymentEntity.getVoucher());
+            payments.add(payment);
         }
         return payments;
     }
@@ -73,7 +69,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void modifyPayment(Payment payment) throws BadRequestException {
         /* PATCH HTTP METHOD */
-        if(payment.getIdOrder() == null){
+        if(payment.getIdPayment() == null){
             throw new BadRequestException("Payment Id Can't be Null");
         }
         PaymentEntity paymentEntity = paymentRepository.findById(payment.getIdPayment()).orElseThrow(this::nonExistingPayment);
@@ -83,8 +79,11 @@ public class PaymentServiceImpl implements PaymentService {
         if(payment.getIdOrder() != null){
             paymentEntity.setOrder(orderRepository.findById(payment.getIdOrder()).orElseThrow(()-> new BadRequestException("Order Not Found")));
         }
-        if(payment.getIdComprobant() != null){
-            paymentEntity.setComprobant(comprobantRepository.findById(payment.getIdComprobant()).orElseThrow(() -> new BadRequestException("Comprobant Not Found")));
+        if(payment.getAmount() != null){
+            paymentEntity.setAmount(payment.getAmount());
+        }
+        if(payment.getVoucher() != null){
+            paymentEntity.setVoucher(payment.getVoucher());
         }
         if(paymentEntity == null){
            throw nonExistingPayment();
@@ -93,27 +92,29 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void updatePayment( Payment payment) throws BadRequestException{
+    public void updatePayment(Payment payment) throws BadRequestException{
         /* PUT HTTP Method */
         if(payment.getIdPayment() == null){
             throw nonExistingPayment();
         }
 
         if(payment.getIdOrder() == null){
-            throw new BadRequestException("Payment Id Can't Be Null");
+            throw new BadRequestException("Payment Order Can't Be Null");
         }
         
         if(payment.getPaymentDate() == null){
             throw new BadRequestException("Payment Date Can't Be Null");
         }
-        if(payment.getIdComprobant() == null){
-            throw new BadRequestException("Payment Comprobant Can't Be Null");
+        if(payment.getAmount() == null){
+            throw new BadRequestException("Payment Amount Can't Be Null");
         }
 
         PaymentEntity paymentEntity = paymentRepository.findById(payment.getIdPayment()).orElseThrow(this::nonExistingPayment);
         
         paymentEntity.setPaymentDate(payment.getPaymentDate());
-        paymentEntity.setOrder(orderRepository.findById(payment.getIdOrder()).orElseThrow(() -> new BadRequestException("No ")));
+        paymentEntity.setAmount(payment.getAmount());
+        paymentEntity.setVoucher(payment.getVoucher());
+        paymentEntity.setOrder(orderRepository.findById(payment.getIdOrder()).orElseThrow(() -> new BadRequestException("Order Not Found")));
         paymentRepository.save(paymentEntity);
     } 
 

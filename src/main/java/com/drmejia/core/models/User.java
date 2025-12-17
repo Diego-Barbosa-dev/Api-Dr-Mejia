@@ -22,6 +22,7 @@ public class User {
     private String email;
     private String password;
     private Long role;
+    private Long idHeadquarter;
 
     public boolean hasNullAttributes() {
         return this.nit == null || this.nit.isBlank() ||

@@ -18,6 +18,7 @@ import com.drmejia.core.services.interfaces.OrderService;
 
 import lombok.NonNull;
 
+@SuppressWarnings("null")
 @Service
 public class OrderServiceImpl implements OrderService{
 
@@ -65,12 +66,20 @@ public class OrderServiceImpl implements OrderService{
         orderEntity.setPatient(patientRepository.findByDocument(order.getDocumentPatient()).orElseThrow(this::nonExistingPatient));
         orderEntity.setHeadquarters(headquaterRepository.findById(order.getIdHeadquarter()).orElseThrow(this::nonExistingHeadquartet));
         orderEntity.setProvider(providerRepository.findById(order.getIdProvider()).orElseThrow(this::nonExistingProvider));
+        orderEntity.setSalePrice(order.getSalePrice());
+        orderEntity.setCostPrice(order.getCostPrice());
+        orderEntity.setFrameType(order.getFrameType());
+        orderEntity.setLensType(order.getLensType());
         orderEntity.setShippingDate(order.getShippingDate());
         orderEntity.setDeliveryDate(order.getDeliveryDate());
-        orderEntity.setDaysPassed(order.getDaysPassed());
+        
+        // daysPassed se calcula automáticamente en la BD
         orderEntity.setState(order.getState());
 
         orderRepository.save(orderEntity);
+
+        // Propagar el ID generado para que el cliente lo reciba
+        order.setIdOrder(orderEntity.getIdOrder());
     }
 
 
@@ -83,13 +92,19 @@ public class OrderServiceImpl implements OrderService{
 
         for (OrderEntity orderEntity : orderEntities){
             Order order = new Order();
+            order.setIdOrder(orderEntity.getIdOrder());
             order.setNumber(orderEntity.getNumber());
             order.setDocumentPatient(orderEntity.getPatient().getDocument());
             order.setIdHeadquarter(orderEntity.getHeadquarters().getIdHeadquarters());
             order.setIdProvider(orderEntity.getProvider().getIdProvider());
+            order.setSalePrice(orderEntity.getSalePrice());
+            order.setCostPrice(orderEntity.getCostPrice());
+            order.setFrameType(orderEntity.getFrameType());
+            order.setLensType(orderEntity.getLensType());
             order.setShippingDate(orderEntity.getShippingDate());
             order.setDeliveryDate(orderEntity.getDeliveryDate());
             order.setDaysPassed(orderEntity.getDaysPassed());
+            order.setCreationDate(orderEntity.getCreationDate());
             order.setState(orderEntity.getState());
 
             orders.add(order);
@@ -120,17 +135,35 @@ public class OrderServiceImpl implements OrderService{
         if(order.getIdProvider() != null){
             orderEntity.setProvider(providerRepository.findById(order.getIdProvider()).orElseThrow(this::nonExistingProvider));
         }
+        if(order.getSalePrice() != null){
+            orderEntity.setSalePrice(order.getSalePrice());
+        }
+        if(order.getCostPrice() != null){
+            orderEntity.setCostPrice(order.getCostPrice());
+        }
+        if(order.getFrameType() != null && !order.getFrameType().isBlank()){
+            orderEntity.setFrameType(order.getFrameType());
+        }
+        if(order.getLensType() != null){
+            orderEntity.setLensType(order.getLensType());
+        }
         if(order.getShippingDate() != null){
             orderEntity.setShippingDate(order.getShippingDate());
         }
         if(order.getDeliveryDate() != null){
             orderEntity.setDeliveryDate(order.getDeliveryDate());
         }
-        if(order.getDaysPassed() != null){
-            orderEntity.setDaysPassed(order.getDaysPassed());
-        }
         if(order.getState() != null){
             orderEntity.setState(order.getState());
+        }
+        if(order.getReceivedBy() != null && !order.getReceivedBy().isBlank()){
+            orderEntity.setReceivedBy(order.getReceivedBy());
+        }
+        if(order.getLabVoucher() != null && !order.getLabVoucher().isBlank()){
+            orderEntity.setLabVoucher(order.getLabVoucher());
+        }
+        if(order.getStateDate() != null){
+            orderEntity.setStateDate(order.getStateDate());
         }
         
         orderRepository.save(orderEntity);
@@ -154,14 +187,17 @@ public class OrderServiceImpl implements OrderService{
         if(order.getIdProvider() == null){
             throw new BadRequestException("Order Provider Can't Be Null");
         }
+        if(order.getFrameType() == null || order.getFrameType().isBlank()){
+            throw new BadRequestException("Order Frame Type Can't Be Null Or Blank");
+        }
+        if(order.getLensType() == null){
+            throw new BadRequestException("Order Lens Type Can't Be Null Or Blank");
+        }
         if(order.getShippingDate() == null){
             throw new BadRequestException("Order Shipping Date Can't Be Null");
         }
         if(order.getDeliveryDate() == null){
             throw new BadRequestException("Order Delivery Date Can't Be Null");
-        }
-        if(order.getDaysPassed() == null){
-            throw new BadRequestException("Order Days Passed Can't Be Null");
         }
         if(order.getState() == null){
             throw new BadRequestException("Order State Can't Be Null");
@@ -173,9 +209,12 @@ public class OrderServiceImpl implements OrderService{
         orderEntity.setPatient(patientRepository.findByDocument(order.getDocumentPatient()).orElseThrow(this::nonExistingPatient));
         orderEntity.setHeadquarters(headquaterRepository.findById(order.getIdHeadquarter()).orElseThrow(this::nonExistingHeadquartet));
         orderEntity.setProvider(providerRepository.findById(order.getIdProvider()).orElseThrow(this::nonExistingProvider));
+        orderEntity.setSalePrice(order.getSalePrice());
+        orderEntity.setCostPrice(order.getCostPrice());
+        orderEntity.setFrameType(order.getFrameType());
+        orderEntity.setLensType(order.getLensType());
         orderEntity.setShippingDate(order.getShippingDate());
         orderEntity.setDeliveryDate(order.getDeliveryDate());
-        orderEntity.setDaysPassed(order.getDaysPassed());
         orderEntity.setState(order.getState());
         
         orderRepository.save(orderEntity);

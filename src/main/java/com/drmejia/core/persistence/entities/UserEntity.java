@@ -38,4 +38,8 @@ public class UserEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_rol", nullable = false)
     private RoleEntity role;
+    
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "id_headquarter", nullable = true)
+    private HeadquarterEntity headquarter;
 }

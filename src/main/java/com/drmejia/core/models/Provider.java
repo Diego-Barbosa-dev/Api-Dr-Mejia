@@ -18,8 +18,7 @@ public class Provider {
     private String email;
 
     public boolean hasNullAttributes() {
-        return this.idProvider == null ||
-               this.nit == null || this.nit.isBlank() ||
+        return this.nit == null || this.nit.isBlank() ||
                this.name == null || this.name.isBlank() ||
                this.address == null || this.address.isBlank() ||
                this.email == null || this.email.isBlank();

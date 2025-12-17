@@ -6,6 +6,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.drmejia.core.models.User;
+import com.drmejia.core.persistence.entities.UserEntity;
 
 public interface UserService extends UserDetailsService {
 
@@ -14,5 +15,7 @@ public interface UserService extends UserDetailsService {
     void modifyUser(User use) throws BadRequestException;
     void updateUser(User user) throws BadRequestException;
     void deleteUser(String nit);
+    UserEntity findByEmail(String email);
+    UserEntity findByName(String name);
 
 }

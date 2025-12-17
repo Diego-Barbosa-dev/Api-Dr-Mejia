@@ -1,7 +1,7 @@
 package com.drmejia.core.persistence.entities;
 
 import java.time.LocalDate;
-
+import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +27,6 @@ public class PaymentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPayment;
 
-    
     @Column(nullable = false)
     private LocalDate paymentDate;
 
@@ -36,7 +34,9 @@ public class PaymentEntity {
     @JoinColumn(name = "id_order", nullable = false)
     private OrderEntity order;
 
-    @OneToOne
-    @JoinColumn(name = "id_comprobant", nullable = false)
-    private ComprobantEntity comprobant;
+    @Column(nullable = true)
+    private String voucher;
+
+    @Column(nullable = false)
+    private BigDecimal amount;
 }

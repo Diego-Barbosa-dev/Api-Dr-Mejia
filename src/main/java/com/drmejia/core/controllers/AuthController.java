@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.drmejia.core.security.JwtTokenUtil;
 import com.drmejia.core.security.models.LoginRequest;
+import com.drmejia.core.persistence.entities.UserEntity;
+import com.drmejia.core.services.interfaces.UserService;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,13 +32,16 @@ public class AuthController {
     private final AuthenticationManager authManager;
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final UserService userService;
 
     public AuthController(AuthenticationManager authManager,
                               UserDetailsService userDetailsService,
-                              JwtTokenUtil jwtTokenUtil) {
+                              JwtTokenUtil jwtTokenUtil,
+                              UserService userService) {
         this.authManager = authManager;
         this.userDetailsService = userDetailsService;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -72,6 +76,31 @@ public class AuthController {
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Collections.singletonMap("error", "Credenciales inválidas"));
+        }
+    }
+    
+    @PostMapping("/user-info")
+    public ResponseEntity<?> getUserInfo(@RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        if (username == null || username.isBlank()) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Username required"));
+        }
+        
+        try {
+            // Buscar por email o por nombre
+            UserEntity user;
+            if (username.contains("@")) {
+                user = userService.findByEmail(username);
+            } else {
+                user = userService.findByName(username);
+            }
+            
+            Map<String, Object> info = new HashMap<>();
+            info.put("idHeadquarter", user.getHeadquarter() != null ? user.getHeadquarter().getIdHeadquarters() : null);
+            return ResponseEntity.ok(info);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("error", "User not found"));
         }
     }
 }
