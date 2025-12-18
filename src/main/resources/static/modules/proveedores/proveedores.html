@@ -1,0 +1,53 @@
+<section class="panel" data-section="proveedores" data-roles="admin,assistant">
+  <div class="panel-header">
+    <h2>Proveedores</h2>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-target="#listaProveedores">Lista</button>
+    <button class="tab" data-target="#formProveedor">Crear</button>
+  </div>
+
+  <!-- Providers List -->
+  <div id="listaProveedores" class="table"></div>
+
+  <!-- New Provider Form -->
+  <form id="formProveedor" style="display:none;">
+    <div class="form-section">
+      <h3>Información del proveedor</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="field">
+          <label>Nombre *</label>
+          <input id="provNombre" type="text" required />
+        </div>
+        <div class="field">
+          <label>NIT *</label>
+          <input id="provNit" type="text" required />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="field">
+          <label>Teléfono</label>
+          <input id="provTelefono" type="tel" />
+        </div>
+        <div class="field">
+          <label>Email *</label>
+          <input id="provEmail" type="email" required />
+        </div>
+      </div>
+      <div class="field">
+        <label>Dirección *</label>
+        <input id="provDireccion" type="text" required />
+      </div>
+      <div class="field">
+        <label>Ciudad</label>
+        <input id="provCiudad" type="text" />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Guardar proveedor</button>
+      <button type="button" id="cancelProveedor" class="btn-outline">Cancelar</button>
+    </div>
+  </form>
+</section>
